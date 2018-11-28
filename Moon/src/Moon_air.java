@@ -16,6 +16,9 @@ import javax.swing.SwingConstants;
 import java.awt.SystemColor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import javax.swing.Action;
@@ -25,6 +28,14 @@ import javax.swing.JTable;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.DropMode;
 import javax.swing.ImageIcon;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 public class Moon_air extends JFrame {
 
@@ -45,6 +56,18 @@ public class Moon_air extends JFrame {
 	private JTextField textField_5;
 	private JTextField textField_6;
 	private JTable table_1;
+	
+	String driver        = "org.mariadb.jdbc.Driver";
+    //String url           = "jdbc:mariadb://103.218.162.26:3306/employees";
+    String url           = "jdbc:mariadb://localhost:3307/univ";
+    String uId           = "root";
+    String uPwd          = "Eshowras1";
+
+    Connection               con;
+    PreparedStatement        pstmt;
+    Statement        stmt;
+    ResultSet                rs;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -66,6 +89,16 @@ public class Moon_air extends JFrame {
 	 * Create the frame.
 	 */
 	public Moon_air() {
+		
+		try {
+            Class.forName(driver);
+            con = DriverManager.getConnection(url, uId, uPwd);
+
+            if( con != null ){ System.out.println("데이터 베이스 접속 성공"); }
+
+        } catch (ClassNotFoundException e) { System.out.println("드라이버 로드 실패");    }
+        catch (SQLException e) { System.out.println("데이터 베이스 접속 실패"); }
+		
 		logIn();
 	}
 	
@@ -212,6 +245,19 @@ public class Moon_air extends JFrame {
 		strtBox.setBounds(113, 24, 123, 30);
 		city_searchPanel.add(strtBox);
 		strtBox.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		
+		try{
+			   rs = stmt.executeQuery("select city_name from city");
+			   while(rs.next())
+			    strtBox.addItem(rs.getString(1));
+			   
+			   
+			  System.out.println(strtBox.getSelectedItem());
+			  }
+			  catch(SQLException e)
+			  {
+			   e.getMessage();
+			  }
 		
 		JLabel arrvLbl = new JLabel("\uB3C4\uCC29\uC9C0");
 		arrvLbl.setBounds(262, 24, 57, 30);
